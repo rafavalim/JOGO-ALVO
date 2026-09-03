@@ -1,0 +1,26 @@
+<div id="game">
+
+  <div id="menu">
+    <h1>🎯 Acerte o Alvo!</h1>
+    <p>Clique no alvo o máximo de vezes que conseguir.</p>
+    <p>Você tem <strong>30 segundos!</strong></p>
+    <button onclick="startGame()">COMEÇAR</button>
+  </div>
+
+  <div id="hud">
+    <span>🎯 Pontos: <span id="score">0</span></span>
+    <span>⏱️ Tempo: <span id="time">30</span>s</span>
+  </div>
+
+  <div id="area">
+    <div id="target" onclick="hitTarget()"></div>
+  </div>
+
+  <div id="gameOver">
+    <h1>🏆 Fim de jogo!</h1>
+    <p>Sua pontuação foi:</p>
+    <div id="finalScore">0</div>
+    <button onclick="startGame()">JOGAR NOVAMENTE</button>
+  </div>
+
+</div>
