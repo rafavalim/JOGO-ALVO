@@ -1,26 +1,218 @@
-<div id="game">
-
-  <div id="menu">
-    <h1>🎯 Acerte o Alvo!</h1>
-    <p>Clique no alvo o máximo de vezes que conseguir.</p>
-    <p>Você tem <strong>30 segundos!</strong></p>
-    <button onclick="startGame()">COMEÇAR</button>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎯 Acerte o Alvo!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    #game {
+      width: 95%;
+      max-width: 800px;
+      height: 550px;
+      background: white;
+      border-radius: 25px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    #menu {
+      text-align: center;
+      padding-top: 120px;
+    }
+    h1 {
+      font-size: 45px;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 20px;
+    }
+    button {
+      border: none;
+      padding: 15px 35px;
+      font-size: 20px;
+      border-radius: 12px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    #hud {
+      display: none;
+      height: 60px;
+      padding: 15px 25px;
+      font-size: 20px;
+      font-weight: bold;
+      background: #f3f3f3;
+      justify-content: space-between;
+    }
+    #area {
+      display: none;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    #target {
+      position: absolute;
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        #ff3333 0%,
+        #ff3333 25%,
+        white 26%,
+        white 45%,
+        #ff3333 46%,
+        #ff3333 65%,
+        white 66%
+      );
+      cursor: pointer;
+      display: none;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    }
+    #gameOver {
+      display: none;
+      text-align: center;
+      padding-top: 150px;
+    }
+    #finalScore {
+      font-size: 32px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div id="menu">
+      <h1>🎯 Acerte o Alvo!</h1>
+      <p>
+        Clique no alvo o máximo de vezes que conseguir.
+      </p>
+      <p>
+        Você tem <strong>30 segundos!</strong>
+      </p>
+      <button onclick="startGame()">
+        COMEÇAR
+      </button>
+    </div>
+    <div id="hud">
+      <span>
+        🎯 Pontos:
+        <span id="score">0</span>
+      </span>
+      <span>
+        ⏱️ Tempo:
+        <span id="time">30</span>s
+      </span>
+    </div>
+    <div id="area">
+      <div
+        id="target"
+        onclick="hitTarget()">
+      </div>
+    </div>
+    <div id="gameOver">
+      <h1>🏆 Fim de jogo!</h1>
+      <p>
+        Sua pontuação foi:
+      </p>
+      <div id="finalScore">
+        0
+      </div>
+      <button onclick="startGame()">
+        JOGAR NOVAMENTE
+      </button>
+    </div>
   </div>
-
-  <div id="hud">
-    <span>🎯 Pontos: <span id="score">0</span></span>
-    <span>⏱️ Tempo: <span id="time">30</span>s</span>
-  </div>
-
-  <div id="area">
-    <div id="target" onclick="hitTarget()"></div>
-  </div>
-
-  <div id="gameOver">
-    <h1>🏆 Fim de jogo!</h1>
-    <p>Sua pontuação foi:</p>
-    <div id="finalScore">0</div>
-    <button onclick="startGame()">JOGAR NOVAMENTE</button>
-  </div>
-
-</div>
+  <script>
+    let score = 0;
+    let time = 30;
+    let timer;
+    const menu =
+      document.getElementById("menu");
+    const hud =
+      document.getElementById("hud");
+    const area =
+      document.getElementById("area");
+    const target =
+      document.getElementById("target");
+    const gameOver =
+      document.getElementById("gameOver");
+    const scoreText =
+      document.getElementById("score");
+    const timeText =
+      document.getElementById("time");
+    const finalScore =
+      document.getElementById("finalScore");
+    function startGame() {
+      score = 0;
+      time = 30;
+      scoreText.textContent = score;
+      timeText.textContent = time;
+      menu.style.display = "none";
+      gameOver.style.display = "none";
+      hud.style.display = "flex";
+      area.style.display = "block";
+      target.style.display = "block";
+      moveTarget();
+      clearInterval(timer);
+      timer = setInterval(function() {
+        time--;
+        timeText.textContent = time;
+        if (time <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+    function hitTarget() {
+      score++;
+      scoreText.textContent = score;
+      moveTarget();
+    }
+    function moveTarget() {
+      const areaWidth =
+        area.clientWidth;
+      const areaHeight =
+        area.clientHeight;
+      const maxX =
+        areaWidth - target.offsetWidth;
+      const maxY =
+        areaHeight - target.offsetHeight;
+      const x =
+        Math.random() * maxX;
+      const y =
+        Math.random() * maxY;
+      target.style.left =
+        x + "px";
+      target.style.top =
+        y + "px";
+    }
+    function endGame() {
+      clearInterval(timer);
+      target.style.display = "none";
+      hud.style.display = "none";
+      area.style.display = "none";
+      gameOver.style.display = "block";
+      finalScore.textContent =
+        score + " pontos 🎯";
+    }
+  </script>
+</body>
+</html>
